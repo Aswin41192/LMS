@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
         required:true,
     },
     password:{
-        type:String,
-        required:true,
+        type:String
     }
 });
 
@@ -69,7 +68,7 @@ User.deleteUser = async(req,res)=>{
 User.findUser = async(req,res)=>{
     try{
         let query = req.query.filter;
-        if(!query){
+        if(!utils.validateFilter(query)){
             res.status(400).json(utils.makeFailureResponse('Invalid filter value'));
             return;
         }
