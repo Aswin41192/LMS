@@ -1,0 +1,75 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Learning Management System",
+      "description": "Learning Management System"
+   },
+    "host": "localhost:8080",
+    "basePath": "/api/",
+    "consumes": [
+        "application/json"
+      ],
+      "paths":{
+          "/users/get":{
+              "get":{
+                  "summary":"Returns all users in the system",
+                  "produces": [
+                    "application/json"
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "OK"
+                    },
+                    "500": {
+                        "description":"Get all users failed"
+                    }
+                  }
+                }
+              },
+              "/users/find":{
+                  "get":{
+                      "summary":"Returns the user with matching firstName, lastName or email",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters":[{
+                        "in":"query",
+                        "name":"filter",
+                        "type":"String"
+                      }],
+                      "responses": {
+                        "200": {
+                          "description": "OK"
+                        },
+                        "400":{
+                            "description":"Invalid Filter Value"
+                        },
+                        "500": {
+                            "description":"Get all users failed"
+                        }
+                      }
+                    }
+              },
+              "/users/save":{
+                  "post":{
+                      "summary":"Create a new user"
+                  },
+                  "parameters": [
+                    {
+                      "name": "user",
+                      "in": "body",
+                      "description": "User that we want to create",
+                      "schema": {
+                        "$ref": "#/definitions/UserSchema"
+                      }
+                    }
+                  ],
+                  "produces": [
+                    "application/json"
+                  ]
+              }
+              }
+          }
+        
+        
