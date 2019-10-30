@@ -55,9 +55,9 @@ User.updateUser = async(req,res)=>{
 
 User.deleteUser = async(req,res)=>{
     try{
-        let userToDelete = req.body;
+        let userToDelete = req.params.id;
         console.log('User to Delete ',userToDelete);
-        await UserModel.deleteOne({"_id":userToDelete._id});
+        await UserModel.deleteOne({"_id":userToDelete});
         res.status(200).json(utils.makeSuccessResponse({"message":"User deleted successfully"}));
     }catch(error){
         console.log('Error',error);
