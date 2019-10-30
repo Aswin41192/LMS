@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const utils = require('../utils/response-utils');
 const moment = require('moment');
-
 const CourseDocumentSchema = mongoose.Schema({
     name: {
-        type: String
+        type: String,
+        required: true
     },
     path: {
         type: String,
-        default: ""
+        default:''
     }
 });
 
@@ -137,11 +137,11 @@ Course.validateFilter = async (req, res, next) => {
 Course.saveDocument = async (req, res) => {
     try {
         const courseRequest = req.body;
-        console.log('Course', courseRequest['courseDocument']);
-
+        const file = req.file;
+        console.log('File',file);
         let course = await CourseModel.findById(courseRequest._id);
         console.log('From DB', course);
-        course.courseDocuments.push(courseRequest['courseDocument']);
+        course.courseDocuments.push({name:file.originalname,path:file.path});
         await CourseModel.create(course);
         res.status(200).json(utils.makeSuccessResponse('Document added successfully!'));
     } catch (error) {
@@ -154,7 +154,7 @@ Course.deleteDocument = async(req,res) =>{
     try {
         const courseRequest = req.body;
         let course = await CourseModel.findById(courseRequest._id);
-        await course.courseDocuments.id(courseRequest['courseDocument']._id).remove();
+        await course.courseDocuments.id(courseRequest.documentId).remove();
         await CourseModel.create(course);
         res.status(200).json(utils.makeSuccessResponse({"message":"Document removed successfully"}));
         
@@ -164,4 +164,21 @@ Course.deleteDocument = async(req,res) =>{
     }
 }
 
+Course.getDoucument =async(req,res) =>{
+    try{
+        const documentId = req.query.documentId;
+        const courseId = req.query.courseId;
+        const course = await CourseModel.findById(courseId);
+        if(course && course.courseDocuments){
+            const courseDocument = course.courseDocuments.id(documentId);
+        console.log('Course Document '+courseDocument);
+        res.status(200).download(courseDocument.path,courseDocument.name)
+        }else{
+            res.status(400).json(utils.makeFailureResponse('File not available'));
+        }     
+    }catch(error){
+        console.log('Error while getting the course documet',error);
+        res.status(500).json(utils.makeFailureResponse('Error while getting the course document'));
+    }
+}
 module.exports = Course;
