@@ -9,3 +9,5 @@ This project uses node as backend, swagger for documentation & Mongo as the data
 After checkout run npm install
 
 The api documentation is available on http://localhost:8080/api-docs
+
+Postman requests are available on https://www.getpostman.com/collections/75563bfb22d8539da7e6
