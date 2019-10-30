@@ -9,6 +9,11 @@ const swaggerDocument = require('./swagger.json');
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
+
 env.config();
 const PORT = process.env.PORT?process.env.PORT:3000;
 
