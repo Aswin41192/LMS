@@ -56,6 +56,7 @@ let Course = {};
 
 Course.getAllCourses = async (req, res) => {
     const courses = await CourseModel.find().sort({
+        schedule:-1,
         courseTitle: 1
     });
     res.json(utils.makeSuccessResponse(courses));
