@@ -165,8 +165,8 @@ Course.saveDocument = async (req, res) => {
             name: file.originalname,
             path: file.path
         });
-        await CourseModel.create(course);
-        res.status(200).json(utils.makeSuccessResponse('Document added successfully!'));
+        const document = await CourseModel.create(course);
+        res.status(200).json(utils.makeSuccessResponse(document));
     } catch (error) {
         console.log('Error while adding document to the course', error);
         res.status(500).json(utils.makeFailureResponse('Error while adding document to the course'));
@@ -197,7 +197,10 @@ Course.getDoucument = async (req, res) => {
         if (course && course.courseDocuments) {
             const courseDocument = course.courseDocuments.id(documentId);
             console.log('Course Document ' + courseDocument);
-            res.status(200).download(courseDocument.path, courseDocument.name)
+            //res.status(200).sendFile(courseDocument.path,{root:'./'});
+            //res.status(200).download(courseDocument.path, courseDocument.name)
+            res.set("Content-Disposition","attachment");
+            res.status(200).json(utils.makeSuccessResponse('Success'));
         } else {
             res.status(400).json(utils.makeFailureResponse('File not available'));
         }
