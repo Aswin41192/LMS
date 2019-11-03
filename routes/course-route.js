@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads')
       },
       filename: function (req, file, cb) {
-        cb(null, file.originalname + '-' + Date.now()+ path.extname(file.originalname));
+        cb(null, file.originalname);
       }
     })
      
@@ -20,7 +20,7 @@ router.get('/get', course.getAllCourses)
       .get('/getDocs',course.getDoucument)
       .get('/getAttendees',course.getCourseAttendees)
       .post('/save',course.saveCourse)
-      .post('/saveDocument/', upload.single('courseDocument'),course.saveDocument)
+      .post('/saveDocument/', upload.array('courseDocument'),course.saveDocument)
       .post('/saveAttendee',course.validateCourseAttendee,course.saveCourseAttendee)
       .post('/removeAttendee',course.validateCourse,course.removeAttendee)
       .post('/deleteDocument',course.deleteDocument)

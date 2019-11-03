@@ -157,14 +157,23 @@ Course.validateFilter = async (req, res, next) => {
 Course.saveDocument = async (req, res) => {
     try {
         const courseRequest = req.body;
-        const file = req.file;
-        console.log('File', file);
+        const files = req.files;
+        console.log('File', files);
         let course = await CourseModel.findById(courseRequest._id);
         console.log('From DB', course);
-        course.courseDocuments.push({
-            name: file.originalname,
-            path: file.path
+        const courseDocuments = course.courseDocuments;
+        files.forEach(file => {
+            const index = courseDocuments.findIndex(document => document.name === file.originalname);
+            if (index> -1){
+                console.log('Duplicate File exists, so removing & adding')
+                course.courseDocuments.id(courseDocuments[index]._id).remove();
+            }
+            course.courseDocuments.push({
+                name: file.originalname,
+                path: file.path
+            });  
         });
+        
         const document = await CourseModel.create(course);
         res.status(200).json(utils.makeSuccessResponse(document));
     } catch (error) {
@@ -197,10 +206,7 @@ Course.getDoucument = async (req, res) => {
         if (course && course.courseDocuments) {
             const courseDocument = course.courseDocuments.id(documentId);
             console.log('Course Document ' + courseDocument);
-            //res.status(200).sendFile(courseDocument.path,{root:'./'});
-            //res.status(200).download(courseDocument.path, courseDocument.name)
-            res.set("Content-Disposition","attachment");
-            res.status(200).json(utils.makeSuccessResponse('Success'));
+            res.download(courseDocument.path);
         } else {
             res.status(400).json(utils.makeFailureResponse('File not available'));
         }
