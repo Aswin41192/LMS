@@ -46,6 +46,10 @@ const CourseSchema = mongoose.Schema({
     maxRegistrationLimit: {
         type: Number
     },
+    duration:{
+        type: Number,
+        default: 8
+    },
     courseDocuments: [CourseDocumentSchema],
     courseAttendees: [UserSchema]
 });
@@ -66,6 +70,7 @@ Course.saveCourse = async (req, res) => {
     try {
         const courseToSave = req.body;
         courseToSave.schedule = moment(courseToSave.schedule, 'DD-MM-YYYY').format('YYYY-MM-DD');
+        console.log('schedule',courseToSave.schedule);
         const course = await CourseModel.create(courseToSave);
         res.json(utils.makeSuccessResponse(course));
     } catch (error) {
@@ -90,12 +95,13 @@ Course.updateCourse = async (req, res) => {
 
 Course.deleteCourse = async (req, res) => {
     try {
-        const course = req.body;
+        const course = req.params.id;
+        console.log('Course',course);
         await CourseModel.deleteOne({
-            _id: course._id
+            _id: course
         });
         res.status(200).json(utils.makeSuccessResponse({
-            message: 'Successfully Deleted User'
+            message: 'Course Successfully Deleted'
         }));
     } catch (error) {
         console.log('Error Deleting Course', error);
@@ -218,7 +224,13 @@ Course.getDoucument = async (req, res) => {
 
 Course.getCourseAttendees = async (req, res) => {
     try {
-
+        const courseId = req.query.courseId;
+        const course = await CourseModel.findById(courseId);
+        if (course && course.courseAttendees){
+            res.status(200).json(utils.makeSuccessResponse(course.courseAttendees));
+        } else {
+            res.status(400).json(utils.makeFailureResponse('Course Attendees not available'));
+        }
     } catch (error) {
         console.log('Error while getting attendees', error);
         res.status(500).json(utils.makeFailureResponse('Error while getting attendees'));

@@ -25,6 +25,6 @@ router.get('/get', course.getAllCourses)
       .post('/removeAttendee',course.validateCourse,course.removeAttendee)
       .post('/deleteDocument',course.deleteDocument)
       .put('/update',course.updateCourse)
-      .delete('/delete',course.deleteCourse);
+      .delete('/delete/:id',course.deleteCourse);
 
 module.exports = router;
