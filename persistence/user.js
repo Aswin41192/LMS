@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type:String
+    },
+    admin:{
+        type: Boolean,
+        default: false
     }
 });
 
@@ -69,7 +73,7 @@ User.findUser = async(req,res)=>{
     try{
         let query = req.query.filter;
         if(!utils.validateFilter(query)){
-            res.status(400).json(utils.makeFailureResponse('Invalid filter value'))
+            res.status(200).json(utils.makeFailureResponse('Invalid filter value'))
             return;
         }
         const q ={"$regex":new RegExp(".*" + query, "i")};
@@ -83,6 +87,22 @@ User.findUser = async(req,res)=>{
     }catch(error){
         console.log('Error',error);
         res.status(500).json(utils.makeFailureResponse('Failed to delete user!'));
+    }
+}
+
+User.validate = async(req,res) => {
+    try{
+    const request = req.body;
+    const user = await UserModel.findOne({$and:[{email: request.email},{password:request.password}]});
+    console.log('User',user);
+    if (user) {
+        res.status(200).json(utils.makeSuccessResponse(user));
+    } else {
+        res.status(200).json(utils.makeFailureResponse('Invalid Credentials'));
+    }
+    } catch(error){
+        console.log('Error',error);
+        res.status(500).json(utils.makeFailureResponse('Failed to validate user!'));
     }
 }
 module.exports = User;

@@ -295,5 +295,27 @@ Course.removeAttendee = async (req, res) => {
     }
 }
 
+Course.getEnrolledCourses = async(req,res) => {
+    try{
+        const attendeeId = req.params.id;
+        const courses = await CourseModel.find({'courseAttendees._id': attendeeId});
+        res.status(200).json(utils.makeSuccessResponse(courses));
+    } catch(error){
+        console.log('Error while fetching courses for the attendee',error);
+        res.status(500).json(utils.makeFailureResponse('Error while fetching enrolled courses for the attendee'));
+    }
+}
+
+Course.getCoursesForAttendee = async(req,res) => {
+    try{
+        const attendeeId = req.params.id;
+        const courses = await CourseModel.find({'courseAttendees._id':{$ne:attendeeId}});
+        res.status(200).json(utils.makeSuccessResponse(courses));
+    } catch(error){
+        console.log('Error while fetching courses for the attendee',error);
+        res.status(500).json(utils.makeFailureResponse('Error while fetching courses for the attendee'));
+    }
+}
+
 
 module.exports = Course;
